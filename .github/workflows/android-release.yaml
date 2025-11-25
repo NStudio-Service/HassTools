@@ -47,8 +47,21 @@ jobs:
             -PversionName=${{ github.event.inputs.versionName }} \
             -PversionCode=${{ github.event.inputs.versionCode }}
 
-      - name: Upload Release APK
-        uses: actions/upload-artifact@v4
+      - name: Get APK path
+        id: apk
+        run: |
+          apk_path=$(ls app/build/outputs/apk/release/*.apk | head -n 1)
+          echo "apk_path=$apk_path" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
         with:
-          name: android-release-apk
-          path: app/build/outputs/apk/release/*.apk
+          tag_name: v${{ github.event.inputs.versionName }}
+          name: v${{ github.event.inputs.versionName }}
+          draft: false
+          prerelease: false
+          files: |
+            ${{ steps.apk.outputs.apk_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
