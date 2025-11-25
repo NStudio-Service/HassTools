@@ -49,7 +49,7 @@ android {
             val keyPassword = System.getenv("ANDROID_KEY_ALIAS_PASSWORD")
 
             if (!keystorePath.isNullOrBlank()) {
-                storeFile = file(keystorePath)
+                storeFile = rootProject.file(keystorePath)
             }
             storePassword = keystorePassword
             this.keyAlias = keyAlias
