@@ -40,6 +40,23 @@ android {
         buildConfigField("String", "AMAP_API_KEY", """"${localProps.getProperty("AMAP_API_KEY", "")}"""")
     }
 
+    signingConfigs {
+        create("release") {
+            // CI 环境：使用环境变量（Actions 里设置的）
+            val keystorePath = System.getenv("ANDROID_KEYSTORE_PATH")
+            val keystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            val keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+            val keyPassword = System.getenv("ANDROID_KEY_ALIAS_PASSWORD")
+
+            if (!keystorePath.isNullOrBlank()) {
+                storeFile = file(keystorePath)
+            }
+            storePassword = keystorePassword
+            this.keyAlias = keyAlias
+            this.keyPassword = keyPassword
+        }
+    }
+
     testOptions {
         unitTests.all {
             it.jvmArgs("-XX:+EnableDynamicAgentLoading")
