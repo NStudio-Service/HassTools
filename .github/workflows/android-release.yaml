@@ -11,6 +11,16 @@ on:
         description: 'Version Code (integer, eg. 10203)'
         required: true
         type: string
+      draft:
+        description: 'Create release as draft?'
+        required: true
+        type: boolean
+        default: false
+      prerelease:
+        description: 'Mark release as prerelease?'
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -50,11 +60,14 @@ jobs:
             -PversionName=${{ github.event.inputs.versionName }} \
             -PversionCode=${{ github.event.inputs.versionCode }}
 
-      - name: Get APK path
+      - name: Rename APK and set path
         id: apk
         run: |
-          apk_path=$(ls app/build/outputs/apk/release/*.apk | head -n 1)
-          echo "apk_path=$apk_path" >> $GITHUB_OUTPUT
+          version="${{ github.event.inputs.versionName }}"
+          src_apk=$(ls app/build/outputs/apk/release/*.apk | head -n 1)
+          dest_apk="app/build/outputs/apk/release/HassTools_v${version}.apk"
+          mv "$src_apk" "$dest_apk"
+          echo "apk_path=$dest_apk" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         id: create_release
@@ -62,8 +75,8 @@ jobs:
         with:
           tag_name: v${{ github.event.inputs.versionName }}
           name: v${{ github.event.inputs.versionName }}
-          draft: false
-          prerelease: false
+          draft: ${{ github.event.inputs.draft == 'true' }}
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           files: |
             ${{ steps.apk.outputs.apk_path }}
         env:
