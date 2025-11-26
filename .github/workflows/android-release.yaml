@@ -21,6 +21,11 @@ on:
         required: true
         type: boolean
         default: false
+      changelog:
+        description: 'One-line release note'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -77,6 +82,7 @@ jobs:
           name: v${{ github.event.inputs.versionName }}
           draft: ${{ github.event.inputs.draft == 'true' }}
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
+          body: ${{ github.event.inputs.changelog }}
           files: |
             ${{ steps.apk.outputs.apk_path }}
         env:
