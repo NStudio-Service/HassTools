@@ -8,24 +8,24 @@ on:
         required: true
         type: string
       versionCode:
-        description: 'Version Code (integer, eg. 10203)'
+        description: 'Version Code (integer, eg. 1)'
         required: true
         type: string
+      changelog:
+        description: 'release note'
+        required: false
+        type: string
+        default: ''
       draft:
         description: 'Create release as draft?'
         required: true
         type: boolean
         default: false
       prerelease:
-        description: 'Mark release as prerelease?'
+        description: 'Mark release as pre-release?'
         required: true
         type: boolean
         default: false
-      changelog:
-        description: 'One-line release note'
-        required: false
-        type: string
-        default: ''
 
 permissions:
   contents: write
